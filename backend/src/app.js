@@ -5,6 +5,7 @@ import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 import compression from "compression";
 import cors from "cors";
+import createHttpError from "http-errors";
 
 // Dotenv config
 dotenv.config();
@@ -32,6 +33,23 @@ app.use(mongoSanitize());
 //compression
 app.use(compression());
 
+//api/v1 Routess
+// app.use("/api/v1/");
+
 app.use(cors({ origin: "http://localhost:3000" }));
+
+app.use(async (req, res, next) => {
+  next(createHttpError.NotFound("This Route dOes Not Exist"));
+});
+
+app.use(async (err, req, res, next) => {
+  res.status(err.status || 500);
+  res.send({
+    error: {
+      status: err.status,
+      message: err.message,
+    },
+  });
+});
 
 export default app;
