@@ -6,6 +6,7 @@ import mongoSanitize from "express-mongo-sanitize";
 import compression from "compression";
 import cors from "cors";
 import createHttpError from "http-errors";
+import routes from "./routes/index.js";
 
 // Dotenv config
 dotenv.config();
@@ -34,7 +35,7 @@ app.use(mongoSanitize());
 app.use(compression());
 
 //api/v1 Routess
-// app.use("/api/v1/");
+app.use("/api/v1/", routes);
 
 app.use(cors({ origin: "http://localhost:3000" }));
 
