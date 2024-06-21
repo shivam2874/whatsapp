@@ -25,5 +25,3 @@ const logger = winston.createLogger({
 });
 
 export default logger;
-
-// To be used as logger.info(message) or logger.error(error)
