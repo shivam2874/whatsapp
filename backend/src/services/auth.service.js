@@ -1,6 +1,7 @@
 import createHttpError from "http-errors";
-import User from "../models/user.model.js";
+import { UserModel } from "../models/index.js";
 import validator from "validator";
+import bcrypt from "bcryptjs";
 
 export const createUser = async (userData) => {
   const { name, email, password, picture, status } = userData;
@@ -35,14 +36,14 @@ export const createUser = async (userData) => {
   }
 
   //Check DB
-  const checkDb = await User.findOne({ email });
+  const checkDb = await UserModel.findOne({ email });
   if (checkDb) {
     throw new createHttpError.Conflict("Email Address already Exists");
   }
 
   //Hash the password in the userModel
 
-  const user = await new User({
+  const user = await new UserModel({
     name,
     email,
     picture: picture || "https://avatar.iran.liara.run/public",
@@ -50,5 +51,19 @@ export const createUser = async (userData) => {
     password,
   }).save();
 
+  return user;
+};
+
+export const signUser = async (email, password) => {
+  const user = await UserModel.findOne({ email: email.toLowerCase() }).lean();
+
+  //Check if User Exists
+  if (!user) throw createHttpError.NotFound("Invalid Credentials");
+
+  //Compare Passwords
+  let passwordMatches = await bcrypt.compare(password, user.password);
+  if (!passwordMatches) throw createHttpError.NotFound("Invalid Credentials");
+
+  //Everything is fine then return
   return user;
 };

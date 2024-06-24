@@ -1,4 +1,4 @@
-import { createUser } from "../services/auth.service.js";
+import { createUser, signUser } from "../services/auth.service.js";
 import { generateToken } from "../services/token.service.js";
 
 export const register = async (req, res, next) => {
@@ -50,13 +50,60 @@ export const register = async (req, res, next) => {
 };
 
 export const login = async (req, res, next) => {
-  res.send("Hello from Login");
+  try {
+    const { email, password } = req.body;
+    const user = await signUser(email, password);
+    const access_token = await generateToken(
+      { userId: user._id },
+      "1d",
+      process.env.ACCESS_TOKEN_SECRET
+    );
+
+    const refresh_token = await generateToken(
+      { userId: user._id },
+      "30d",
+      process.env.REFRESH_TOKEN_SECRET
+    );
+
+    res.cookie("refreshToken", refresh_token, {
+      httpOnly: true,
+      path: "/api/v1/auth/refreshtoken",
+      maxAge: 30 * 24 * 60 * 60 * 10000, //30 Days
+    });
+    // console.table({ access_token, refresh_token });
+
+    res.json({
+      message: "register sucessful.",
+
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        picture: user.picture,
+        status: user.status,
+        access_token: access_token,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const logout = async (req, res, next) => {
-  res.send("Hello from Logout");
+  try {
+    res.clearCookie("refreshToken", { path: "/api/v1/auth/refreshtoken" });
+    res.json({
+      message: "Logged out Sucessfully",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const refreshToken = async (req, res, next) => {
-  res.send("Hello from Refresh Token");
+  try {
+  } catch (error) {
+    next(error);
+  }
 };
