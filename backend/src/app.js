@@ -4,6 +4,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 import compression from "compression";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import createHttpError from "http-errors";
 import routes from "./routes/index.js";
@@ -30,6 +31,9 @@ app.use(express.urlencoded({ extended: true }));
 
 //Sanitize Request Data
 app.use(mongoSanitize());
+
+//Using Cookie Parser
+app.use(cookieParser());
 
 //compression
 app.use(compression());
