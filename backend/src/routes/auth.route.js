@@ -13,5 +13,6 @@ router.route("/register").post(trimrequest.all, register);
 router.route("/login").post(trimrequest.all, login);
 router.route("/logout").post(trimrequest.all, logout);
 router.route("/refreshtoken").post(trimrequest.all, refreshToken);
+router.route("/testAuthMiddleware").get(trimrequest.all);
 
 export default router;

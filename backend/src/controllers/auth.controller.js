@@ -75,7 +75,7 @@ export const login = async (req, res, next) => {
     // console.table({ access_token, refresh_token });
 
     res.json({
-      message: "register sucessful.",
+      message: "Logged In sucessfully.",
 
       user: {
         _id: user._id,
